@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up | Finally</title>
+    <link href="{% static 'css/bootstrap/bootstrap.min.css' %}" rel="stylesheet" />
+
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: "Inter", sans-serif;
+        }
+
+        .full-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left-panel {
+            /* background: linear-gradient(to bottom, #f5ebff, #e5d6ff); */
+            /* color: #3d0080; */
+            /* padding: 40px; */
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .right-panel {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .form-control {
+            height: 2.5rem;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .form-label {
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .login-btn {
+
+            background-color: #1c1c1c;
+            color: white;
+            font-weight: 500;
+            height: 2.5rem;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .login-btn:hover {
+            color: black;
+            border: 1px solid black;
+        }
+
+        .footer-links {
+            width: 60%;
+            font-size: 10px;
+            color: #6c757d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #6c757d;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .full-container {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                width: 100%;
+                padding: 30px;
+                align-items: center;
+            }
+
+            .right-panel .w-100 {
+                max-width: 80% !important;
+            }
+
+            .footer-links {
+                width: 100%;
+                font-size: 0.8rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="full-container">
+
+        <!-- Left Panel -->
+        <div class="col-md-9 right-panel">
+            <div class="w-100" style="max-width: 39%; margin: auto;">
+                <h2 class="fw-bold mb-4 w-100">Create your account</h3>
+                    {% if error_message %}
+                        <div class="alert alert-danger" role="alert" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">
+                            {{ error_message }}
+                        </div>
+                    {% endif %}
+                    <form method="POST" action="{% url 'register'  %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Work email</label>
+                            <input name="email" id="email" type="email" class="form-control"
+                                placeholder="my@email.com" required />
+                            <div class="mt-1" style="font-size: 0.7rem; font-weight: 500; color: #6A7282;">Enter your
+                                business
+                                email</div>
+                        </div>
+                        <div class="mb-4 position-relative">
+                            <label class="form-label">Password</label>
+                            <input name="password" id="password" type="password" class="form-control"
+                                placeholder="Enter your password" required />
+                            <div class="mt-1" style="font-size: 0.7rem; font-weight: 500; color: #6A7282;"> Your
+                                password must
+                                be at least 8 characters long and include both uppercase and
+                                lowercase letters
+                            </div>
+                        </div>
+                        <button type="submit" class="btn login-btn mb-3">Create account</button>
+                        <div class="text-left" style="font-size: 0.8rem;">
+                            Already have an account?
+                            <a href=" {% url 'login' %}  " class="fw-semibold text-primary text-decoration-none">Sign
+                                In</a>
+                        </div>
+                    </form>
+            </div>
+            <div class="position-absolute bottom-0 mt-4 footer-links">
+                <a href="#">System Status</a> •
+                <a href="#">Privacy Policy</a> •
+                <a href="#">Terms & Conditions</a> •
+                <span>© 2022<a class="m-0 p-0" href="https://srashtasoft.com/"> srashtasoft </a>.All rights reserved.</span>
+            </div>
+        </div>
+
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <img src="{% static 'image/rightside.jpeg' %}" alt="Left Panel"
+                class="w-100 h-100 object-fit-contain p-0 m-0">
+        </div>
+    </div>
+
+    <script src="{% static 'css/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

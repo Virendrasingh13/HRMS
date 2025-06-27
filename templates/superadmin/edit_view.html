@@ -1,0 +1,975 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Company Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{% static 'css/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f9fa;
+        display: flex;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: #1a1a2e;
+        color: #fff;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .sidebar .logo {
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .sidebar .nav-link {
+        color: #ccc;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+        background-color: #3f3f5a;
+        color: #007bff;
+    }
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+     .greeting {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+    .icons i {
+        font-size: 1.3rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .icons i:hover {
+        color: #007bff;
+    }
+
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        background-color: #f1ebff;
+        color: #7b61ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .edit-btn {
+        border: 2px solid #000;
+        padding: 5px 15px;
+        margin: 15px 0px 0px 860px;
+        border-radius: 6px;
+        justify-items: end;
+    }
+
+    .edit-btn:hover {
+        color: #0b02026f;
+    }
+
+    .tab-nav .nav-link {
+        color: black;
+    }
+
+    .tab-nav .nav-link.active {
+        border-style: none;
+        border-bottom: 4px solid #5e50f9;
+        color: #5e50f9;
+    }
+
+    #companySection .card {
+        width: 470px;
+        height: auto;
+    }
+
+    /* model styling */
+
+    .modal {
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        margin: 20px;
+        border-radius: 10px;
+        width: 360px;
+        box-shadow: 0 0 10px #888;
+    }
+
+    .m-content {
+        background-color: white;
+        padding: 20px;
+        margin: 20px;
+        border-radius: 10px;
+        width: 600px;
+        box-shadow: 0 0 10px #888;
+    }
+
+    .status-approved {
+        background-color: #d1ffe7;
+        color: #1aaa55;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .status-under-review {
+        background-color: #fff7d1;
+        color: #c79700;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+    .status-rejected {
+        background-color: #ffd6d6;
+        color: #d11a2a;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+    }
+
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 5px;
+        font-size: 1rem;
+    }
+
+    .btn-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+    }
+
+    .btn.cancel {
+        background-color: white;
+        border: 1px solid #333;
+    }
+
+    .btn.cancel:hover {
+        background-color: #5b46f5;
+        color: #fff;
+    }
+
+    .btn.submit {
+        background-color: #5b46f5;
+        color: white;
+    }
+
+    .error {
+        color: red;
+        font-size: 0.9rem;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        width: 250px;
+        background-color: #1a1a2e;
+        color: #fff;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .sidebar .logo {
+        font-weight: 600;
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        color: #fff;
+        text-align: center;
+    }
+
+    .sidebar .nav-link {
+        color: #ccc;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+        background-color: #3f3f5a;
+        color: #007bff;
+    }
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    .sidebar .nav-bottom {
+        margin-top: auto;
+    }
+
+    .icons i {
+        font-size: 1.3rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .icons i:hover {
+        color: #007bff;
+    }
+
+    /* overview card styling */
+
+    .overviewCard {
+        width: 550px;
+        position: relative;
+        left: 250px;
+    }
+
+    form {
+        font-size: smaller;
+        font-weight: bold;
+    }
+
+
+    .tab-nav .nav-link {
+        color: black;
+    }
+
+    .tab-nav .nav-link.active {
+        border-style: none;
+        border-bottom: 4px solid #5e50f9;
+    }
+
+    form div .btn {
+        width: 200px;
+    }
+
+    form div .btn:hover {
+        background-color: #0011FF;
+        color: #fff;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+      @media (min-width: 768px) and (max-width: 1024px) {
+            body {
+                display: block !important;
+            }
+
+            .sidebar {
+                width: 100% !important;
+                height: auto !important;
+                position: relative !important;
+                border-radius: 0 !important;
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                
+            }
+
+           
+           
+            .sidebar .flex-column {
+                flex-direction: row !important;
+                justify-content: start;
+            }
+
+            .sidebar .nav-bottom {
+                display: inline-flex;
+            }
+
+            .col-md-10 {
+               width: 100% !important;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: auto;
+            }
+
+            .edit-btn{
+                margin: 0px ;
+                border: 1px solid #000;
+            }
+ 
+        }
+</style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">Finally<span class="text-primary">HR</span></div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link " href="{% url 'superadmin_home' %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'superadmin_companies' %}">
+                    <i class="fas fa-building"></i>
+                    <span>Companies</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'superadmin_countries' %}">
+                    <i class="fas fa-globe"></i>
+                    <span>Countries</span>
+                </a>
+            </li>
+        </ul>
+        
+    </div>
+
+    <!-- Main Header -->
+    <div class="col-md-10 ">
+        <header>
+            <div class="d-flex justify-content-between p-4 bg-white">
+                <div class="greeting">Companies
+                    <span class="" style="color: #7b61ff;">/ {{company.company_name}}</span>
+                </div>
+                 <div class="d-flex icons">
+                        <div class="dropdown">
+                            <p class="card p-2 m-1" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
+                                <i class="far fa-user"></i>
+                            </p>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}?error_message=Logout%20Sucessfull%20Please Login!">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+            </div>
+        </header>
+
+        <!-- Overview Cards -->
+
+        <div class=" card border-0 bg-white p-2 m-3">
+            {% comment %} <a href="{% url 'superadmin_edit_company' company.id %}"><button class="edit-btn bg-light">Edit company</button></a> {% endcomment %}
+            <div class="card border-0 align-items-center gap-3 mb-5">
+                <div class="avatar-circle">{{ company.company_name|slice:":1"|upper }}</div>
+                <div>
+                    <h4>{{ company.company_name }}</h4>
+                </div>
+                <div class="m-4 my-0">
+                    <span class="
+                        {% if company.status == 'Active' %}
+                            status-approved
+                        {% else %}
+                            status-rejected
+                        {% endif %}
+                        ">
+                        {{ company.status }}
+                    </span>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs tab-nav mb-3">
+                <li class="nav-item">
+                    <p class="nav-link" id="companyTab">Company details</p>
+                </li>
+                <li class="nav-item">
+                    <p class="nav-link" id="documentsTab" >Documents</p>
+                </li>
+                <li class="nav-item">
+                    <p class="nav-link" id="employeesTab" >Employees</p>
+                </li>
+            </ul>
+
+
+
+            <!-- Company Details Section -->
+            <div id="companySection" class="d-flex align-items-start justify-content-between p-3">
+                <div class="card border-0 p-2 mb-4 bg-light">
+                    <h5 class="fw-bold mb-3 mt-2 mx-3">Company info</h5>
+                    <div class="d-flex justify-content-between mx-3 mb-2">
+                        <span class="text-muted fw-semibold">Country:</span>
+                        <span class="fw-bold text-capitalize">{{ company.country_id.name }}</span>
+                    </div> 
+                    <div class="d-flex justify-content-between mx-3 mb-2">
+                        <span class="text-muted fw-semibold">Number of employees:</span>
+                        <span class="fw-bold text-capitalize"> {{ company.employees.count }}</span>
+                    </div>
+                </div>
+                <div class="card border-0 p-2 mb-4 bg-light">
+                    <h5 class="fw-bold mb-3 mt-2 mx-3">Contact person</h5>
+                    <div class="d-flex justify-content-between mx-3 mb-2">
+                        <span class="text-muted fw-semibold">Full name:</span>
+                        <span class="fw-bold text-capitalize">{{ company.admin_name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Section-->
+            <div id="documentsSection" class="hidden">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <form method="get" class="d-flex w-70">
+                            <input type="search" name="q" class="form-control form-control-sm me-2" placeholder="Search by name or category" value="{{ search_query|default:'' }}" required/>
+                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                        </form>
+                        <span class="p-2 text-secondary" disabled> {{ count }} items</span>
+                        {% if search_query %}
+                            <span class="ms-2 text-secondary">Showing results for: <b>{{ search_query }}</b></span>
+                        {% endif %}
+                    </div>
+                    <div>    
+                        <button class="btn btn-primary" type="button" onclick="openUploadModal()">Upload file</button>
+                    </div>
+                </div>
+            
+                <table class="table table-hover bg-white rounded shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if documents %}
+                        {% for document in documents %}
+                        <tr>
+                            <td><i class="fa-regular fa-calendar"></i> 
+                                {% if document.document %}
+                                    <a href="{% url 'protected_document' document.document.name %}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">{{ document.name|default:'No file' }}</a>
+                                {% else %}
+                                    No file
+                                {% endif %}
+                            </td>
+                            <td>{{ document.category|default:'-' }}</td>
+                            <td>
+                                <span class="
+                                    {% if document.status == 'Approve' %}
+                                        status-approved
+                                    {% elif document.status == 'Rejected' %}
+                                        status-rejected
+                                    {% else %}
+                                        status-under-review
+                                    {% endif %}
+                                    ">
+                                    {{ document.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <a class="edit-button text-secondary text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.2rem;">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </a>
+                                    {% if document.status != 'Approve' and document.status != 'Rejected' %}
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{% url 'superadmin_edit_document' document.company_id.id document.id %}">Edit</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="return confirmDeleteDocument('{{ document.id }}', '{{ company.id }}');">Delete</a></li>
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4">No documents found.</td></tr>
+                        {% endfor %}
+                    {% else %}
+                            <tr><td colspan="4">No documents found{% if search_query %} for "{{ search_query }}"{% endif %}.</td></tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+                <!-- Pagination Controls -->
+                {% if page_obj and page_obj.paginator.num_pages > 1 %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+
+            <!--employee section-->
+            <div id="employeesSection" class="hidden">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <form method="get" class="d-flex w-70">
+                            <input type="search" name="eq" class="form-control form-control-sm me-2" placeholder="Search by name " value="{{ emp_search_query|default:'' }}" />
+                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                        </form>
+                        <span class="p-2 text-secondary" disabled> {{ emp_count }} items</span>
+                        {% if search_query %}
+                            <span class="ms-2 text-secondary">Showing results for: <b>{{ emp_search_query }}</b></span>
+                        {% endif %}
+                    </div>                
+                </div>
+
+                <table class="table table-hover bg-white rounded shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Salary</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td>
+                                {{employee.first_name}} {{employee.last_name}}
+                            </td>
+                            <td>{{employee.job_title}}</td>
+                            <td><span class="
+                                    {% if employee.status == 'Active' %}
+                                        status-approved
+                                    {% else %}
+                                        status-rejected
+                                    {% endif %}
+                                ">
+                                {{ employee.status }}</span></td>
+                            <td>
+                                {% for payment in payments %}
+                                    {% if payment.employee.id == employee.id %}
+                                        {{ payment.salary_per_hour }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a href="{% url 'payment_details_data' employee.company_id employee.id %}" onclick="oUploadModal()" class="text-decoration-none">Edit</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4">No Employees found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Pagination Controls -->
+                {% if employees and employees.paginator.num_pages > 1 %}
+                <nav aria-label="Employee page navigation">
+                    <ul class="pagination justify-content-center mt-3">
+                        {% if employees.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?eq={{ emp_search_query }}&epage={{ employees.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                        {% endif %}
+
+                        {% for num in employees.paginator.page_range %}
+                            {% if employees.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?eq={{ emp_search_query }}&epage={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if employees.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?eq={{ emp_search_query }}&epage={{ employees.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- model Form -->
+
+    <div class="modal" id="documentModal">
+        <div class="modal-content">
+            <h5 class="text-center">Upload document</h5><br>
+            <form id="documentForm" method="post" enctype="multipart/form-data" action="{% url 'superadmin_upload_document' company.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title">Name</label>
+                    < type="text" name="name" placeholder="Type document name" id="name">
+                    <label for="description">Description</label>
+                    <input type="text" name="description" placeholder="Type description" id="descriptionMsg" required>
+                    <label for="category">Category</label>
+                    <input type="text" name="category" placeholder="Type category" id="category" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status" disabled>
+                        <option value="Active" selected>Active</option>
+                    </select>
+                    <div class="card bg-light p-4 m-2 border-style-dashed align-items-center">
+                        <input type="file" name="document" required>
+                        <small><span class="text-primary"><b>Click to Upload</span> or drag and drop</b></small>
+                        <small class="font-weight-10px" disabled>SVG, PNG, JPG or GIF (max. 50 mb)</small>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button type="button" class="btn cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn submit">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Payemnt details form  -->
+     <div class="modal" id="employeeModal">
+        <div class="m-content">
+            <h5 class="text-align-center">Payment Details</h5><br>
+            {% if employee and employee.id %}
+            <form id="employeeForm" method="post" enctype="multipart/form-data" action="{% url 'submit_button_payment_details' employee.company_id employee.id %}">
+            {% else %}
+            <form id="employeeForm" method="post" enctype="multipart/form-data">
+            {% endif %} 
+                {% csrf_token %}
+                <div class="mb-2">
+                    <label for="date" class="col-sm-6 col-form-control">Select start date</label><br>
+                    <input type="date" class="form-control form-control-sm" name="start_date" id="start_date" value="{{ employee.start_date|date:'Y-m-d' }}"  disabled>
+                </div>
+                
+                <div class="mb-2">
+                    <label for="payment_cycle" class="col-sm-6 col-form-control">Select payment cycle</label>
+                    <select class="form-select" name="payment_cycle" id="payment_cycle" required>
+                        <option value="Weekly" {% if payment.payment_cycle == "Weekly" %}selected{% endif %}>Weekly</option>
+                        <option value="Monthly" {% if payment.payment_cycle == "Monthly" %}selected{% endif %}>Monthly</option>
+                        <option value="Bi-weekly" {% if payment.payment_cycle == "Bi-weekly" %}selected{% endif %}>Bi-weekly</option>
+                        <option value="Twice in month" {% if payment.payment_cycle == "Twice in month" %}selected{% endif %}>Twice in month</option>
+                    </select>
+                </div>
+ 
+                <!-- Weekly/Bi-weekly (Days Dropdown) -->
+                <div class="mb-2" id="frequency-select-container">
+                    <label for="payment_frequency" class="col-sm-6 col-form-control">Select frequency cycle</label>
+                    <select class="form-select" name="payment_frequency" id="payment_frequency">
+                    </select>
+                </div>
+
+                <!-- Monthly (Single Date Input) -->
+                <div class="mb-2 d-none" id="calendar-input-container">
+                    <label for="payment_date" class="col-sm-6 col-form-control">Select date</label>
+                    <input type="date" class="form-control" name="payment_frequency" id="payment_frequency">
+                </div>
+
+                <!-- Twice in Month (Two Date Inputs) -->
+                <div class="mb-2 d-none" id="calendar-double-input-container">
+                    <label class="col-sm-6 col-form-control">Select first and second date</label>
+                    <input type="date" class="form-control mb-2" name="payment_frequency" id="payment_frequency">
+                    <input type="date" class="form-control" name="payment_frequency_date2" id="payment_frequency_date2">
+                </div>
+                <div class="row">
+                    <div class="row col-md">
+                        <label for="currency" class="col-sm-6 col-form-control">Currency</label>
+                        <input type="text" class="form-control" name="currency" id="currency" value="{{employee.country_id.code}}" disabled>
+                    </div>
+                    <div class="row col-md">
+                        <label for="rate" class="col-sm-6 col-form-control">Rate per hour</label>
+                        <input type="number" class="form-control" name="salary_per_hour" id="salary_per_hour" value="{{payment.salary_per_hour}}" required>
+                    </div>
+                </div>
+                <div class="row pt-5">
+                    <div class="col-6">
+                        <a href="{% url 'superadmin_edit_view' employee.company_id|default:company.id %}" class="btn btn-light">Cancel</a>
+                    </div>
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const companyTab = document.getElementById("companyTab");
+        const documentsTab = document.getElementById("documentsTab");
+        const employeesTab = document.getElementById("employeesTab");
+        const companySection = document.getElementById("companySection");
+        const documentsSection = document.getElementById("documentsSection");
+        const employeesSection = document.getElementById("employeesSection");
+
+        function showCompany() {
+            companyTab.classList.add("active");
+            documentsTab.classList.remove("active");
+            employeesTab.classList.remove("active");
+            companySection.classList.remove("hidden");
+            documentsSection.classList.add("hidden");
+            employeesSection.classList.add("hidden");
+            localStorage.setItem("activeTab", "company");
+        }
+
+        function showDocuments() {
+            documentsTab.classList.add("active");
+            companyTab.classList.remove("active");
+            employeesTab.classList.remove("active");
+            documentsSection.classList.remove("hidden");
+            companySection.classList.add("hidden");
+            employeesSection.classList.add("hidden");
+            localStorage.setItem("activeTab", "documents");
+        }
+
+        function showEmployees() {
+            employeesTab.classList.add("active");
+            companyTab.classList.remove("active");
+            documentsTab.classList.remove("active");
+            employeesSection.classList.remove("hidden");
+            companySection.classList.add("hidden");
+            documentsSection.classList.add("hidden");
+            localStorage.setItem("activeTab", "employees");
+        }
+
+        companyTab.addEventListener("click", showCompany);
+        documentsTab.addEventListener("click", showDocuments);
+        employeesTab.addEventListener("click", showEmployees);
+
+        // Load saved tab from localStorage (defaults to company)
+        const savedTab = localStorage.getItem("activeTab");
+        if (savedTab === "documents") {
+            showDocuments();
+        } else if (savedTab === "employees") {
+            showEmployees();
+        } else {
+            showCompany();
+        }
+    
+
+    //  Script for modal 
+
+        const modal = document.getElementById('documentModal');
+        const form = document.getElementById('documentForm');
+
+        function openModal() {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            form.reset();
+        }
+
+        const model = document.getElementById('employeeModal');
+        const formm = document.getElementById('employeeForm');
+
+        const openModalEjs="{{ openModal|escapejs }}";
+
+        if(openModalEjs=='open') oUploadModal();
+        else cModal();
+
+
+        function oModal() {
+            model.style.display = 'flex';
+        }
+
+        form.addEventListener('submit', function (e) {
+            // Remove e.preventDefault(); to allow real form submission
+        });
+
+        function openUploadModal() {
+            document.getElementById('documentModal').style.display = 'flex';
+        }
+
+        function oUploadModal() {
+            document.getElementById('employeeModal').style.display = 'flex';
+            setTimeout(updatePaymentFrequency, 0); // Ensure DOM is ready before updating
+        }
+
+        // Close modal on outside click
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+   
+
+    //  Script for document deletion confirmation 
+   
+        function confirmDeleteDocument(documentId, companyId) {
+            if (confirm('Are you sure you want to delete this document?')) {
+                window.location.href = '/superadmin/documents/delete/' + documentId + '/?company_id=' + companyId;
+            }
+            return false;
+        }
+
+
+
+        
+        const paymentCycle = document.getElementById("payment_cycle");
+        const paymentFrequency = document.getElementById("payment_frequency");
+ 
+        const selectContainer = document.getElementById("frequency-select-container");
+        const calendarContainer = document.getElementById("calendar-input-container");
+        const calendarDoubleContainer = document.getElementById("calendar-double-input-container");
+ 
+
+        function updatePaymentFrequency() {
+            const selectedCycle = paymentCycle.value;
+
+            // Hide all and remove `name` attributes
+            selectContainer.classList.add("d-none");
+            calendarContainer.classList.add("d-none");
+            calendarDoubleContainer.classList.add("d-none");
+
+            paymentFrequency.removeAttribute("name");
+            const calendarInput = document.querySelector('#calendar-input-container input');
+            const doubleInputs = document.querySelectorAll('#calendar-double-input-container input');
+
+            calendarInput && calendarInput.removeAttribute("name");
+            doubleInputs.forEach(input => input.removeAttribute("name"));
+
+            // Now show and activate only relevant fields
+            if (selectedCycle === "Weekly" || selectedCycle === "Bi-weekly") {
+                selectContainer.classList.remove("d-none");
+                paymentFrequency.setAttribute("name", "payment_frequency");
+                paymentFrequency.innerHTML = "";
+
+                const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+                days.forEach(day => {
+                    const option = document.createElement("option");
+                    option.value = day;
+                    option.textContent = `Every ${day}`;
+                    paymentFrequency.appendChild(option);
+                });
+
+            } else if (selectedCycle === "Monthly") {
+                calendarContainer.classList.remove("d-none");
+                calendarInput.setAttribute("name", "payment_frequency");
+
+            } else if (selectedCycle === "Twice in month") {
+                calendarDoubleContainer.classList.remove("d-none");
+                doubleInputs[0].setAttribute("name", "payment_frequency");
+                doubleInputs[1].setAttribute("name", "payment_frequency_date2");
+            }
+        }
+
+        paymentCycle.addEventListener("change", updatePaymentFrequency);
+
+        // Call updatePaymentFrequency on page load if modal is open and payment cycle is set
+        if (document.getElementById('employeeModal').style.display === 'flex' && paymentCycle.value) {
+            setTimeout(updatePaymentFrequency, 0);
+        }
+
+
+    </script>
+
+     <script src="{% static 'css/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,603 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies Dashboard</title>
+     <link href="{% static 'css/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar .logo {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .sidebar .nav-link {
+            color: #ccc;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #3f3f5a;
+            color: #007bff;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .nav-bottom {
+            margin-top: auto;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            margin: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+       
+
+         .greeting {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+         .icons i {
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+         .icons i:hover {
+            color: #007bff;
+        }
+
+        /* Card Styling for Companies */
+       
+
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header-custom h5 {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header-custom h5 i {
+            margin-right: 10px;
+            color: #007bff;
+        }
+
+        .card-header-custom .view-all {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .card-header-custom .view-all:hover {
+            color: #0056b3;
+        }
+
+        /* Table Styling */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #555;
+            padding: 15px 12px;
+            background-color: #f0f2f5;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #d3d3d3;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 12px;
+            color: #444;
+        }
+
+        .table tbody td img {
+            width: 24px;
+            height: 18px;
+            border-radius: 3px;
+            margin-right: 8px;
+            object-fit: cover;
+        }
+
+        .badge-active {
+            background-color: #e6f7ed;
+
+            color: #28a745;
+
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge-inactive {
+            background-color: #e6f7ed;
+
+            color: #d91f1f;
+
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge-Deactive {
+            color: #007bff;
+        }
+
+        .edit-button:hover {
+             color: #007bff;
+             text-decoration: underline;
+        }
+
+        .status-approved {
+            background-color: #d1ffe7;
+            color: #1aaa55;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .status-under-review {
+            background-color: #fff7d1;
+            color: #c79700;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .status-rejected {
+            background-color: #ffd6d6;
+            color: #d11a2a;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        /* modal styling */
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 0 10px #888;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn.cancel {
+            background-color: white;
+            border: 1px solid #333;
+        }
+
+        .btn.cancel:hover {
+            background-color: #5b46f5;
+            color: #fff;
+        }
+
+        .btn.submit {
+            background-color: #5b46f5;
+            color: white;
+        }
+        
+        .error {
+            color: red;
+            font-size: 0.9rem;
+        }
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            body {
+                display: block !important;
+            }
+
+            .sidebar {
+                width: 100% !important;
+                height: auto !important;
+                position: relative !important;
+                border-radius: 0 !important;
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                
+            }
+
+           
+           
+            .sidebar .flex-column {
+                flex-direction: row !important;
+                justify-content: start;
+            }
+
+            .sidebar .nav-bottom {
+                display: inline-flex;
+            }
+
+            .col-md-10 {
+               width: 100% !important;
+            }
+
+           
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: auto;
+            }
+ 
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">Finally<span class="text-primary">HR</span></div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'superadmin_home' %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'superadmin_companies' %}">
+                    <i class="fas fa-building"></i>
+                    <span>Companies</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'superadmin_countries' %}">
+                    <i class="fas fa-globe"></i>
+                    <span>Countries</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-10 ">
+
+        <header >
+            <div class="d-flex justify-content-between p-4 bg-white mb-3">
+                 <div class="greeting">Companies</div>
+                 <div class="d-flex icons">
+                        <div class="dropdown">
+                            <p class="card p-2 m-1" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
+                                <i class="far fa-user"></i>
+                            </p>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}?error_message=Logout%20Sucessfull%20Please Login!">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+            </div>
+        </header>
+
+
+        <!-- Overview Cards -->
+         
+        <div class="row m-3 bg-white p-2 rounded">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Overview</h5>
+                <!-- <div>
+                    <button type="button" class="btn btn-primary p-2" onclick="openModal()">+ Add country</button>
+                </div> -->
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-2  rounded">
+                    <h6>Total companies</h6>
+                    <h4>{{ total_companies }}</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-2 shadow-sm rounded">
+                    <h6>Active companies</h6>
+                    <h4>{{ active_companies }}</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-2 shadow-sm rounded">
+                    <h6>Pending review</h6>
+                    <h4>{{ pending_companies }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Companies Table -->
+        <div class="bg-white p-3 m-3 rounded">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-th-large"></i> Companies overview</h5>
+                <form class="d-flex" method="get" style="width: 400px;">
+                    <input type="text" class="" name="q" placeholder="Search by name" value="{{ request.GET.q }}" required>
+                    <button class=" m-1 btn btn-primary " type="submit">Search</button>
+                </form>
+            </div>
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Company name</th>
+                        <th>Status</th>
+                        <th>Contact person</th>
+                        <th>Country</th>
+                        <th>Employees</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesTableBody">
+                {% if companies_data %}
+                    {% for item in companies_data %}
+                    <tr>
+                        <td><a href="{% url 'superadmin_edit_view' item.company.id %}" class="text-decoration-none">{{ item.company.company_name }}</a></td>
+                        <td>
+                            <span class="
+                                {% if item.company.status == 'Active' %}
+                                    status-approved
+                                {% else %}
+                                    status-rejected
+                                {% endif %}
+                                ">
+                                {{ item.company.status }}
+                            </span>
+                        </td>
+                        <td>{{ item.company.admin_name }}</td>
+                        <td>{{ item.company.country_id.name }}</td>
+                        <td>{{ item.employee_count }}</td>
+                        <td><a href="{% url 'superadmin_edit_company' item.company.id %}" class="edit-button text-primary text-decoration-none">Edit</a></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No companies found.</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+            
+            <!-- Pagination Controls -->
+            {% if page_obj and page_obj.paginator.num_pages > 1 %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-3">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal" id="countryModal">
+        <div class="modal-content">
+            <h3>Add Country</h3>
+            <form id="countryForm" method="POST" action="{% url 'superadmin_countries' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="countryName">Country Name</label>
+                    <input type="text" id="countryName" name="countryName" placeholder="Enter country name" required>
+                    <div class="error" id="countryError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="countryCode">Currency Symbol</label>
+                    <input type="text" id="countryCurrency" name="countryCurruncy"
+                        placeholder="Enter country symbol '₹'" maxlength=1 required>
+                    <div class="error" id="countryError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="countryStatus" name="countryStatus">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="btn-row">
+                    <button type="button" class="btn cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn submit">Add Country</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+    <script>
+        const modal = document.getElementById('countryModal');
+        const form = document.getElementById('countryForm');
+        const countryInput = document.getElementById('countryName');
+        const countryError = document.getElementById('countryError');
+
+        function openModal() {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            form.reset();
+            countryError.textContent = '';
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const countryName = countryInput.value.trim();
+            if (!countryName) {
+                countryError.textContent = 'Country name is required.';
+                return;
+            }
+            countryError.textContent = '';
+            alert('Country added: ' + countryName + ' (' + document.getElementById('status').value + ')');
+            closeModal();
+        });
+        // Close modal on outside click
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Company name search filter
+        const searchInput = document.getElementById('gsearch');
+        const tableBody = document.getElementById('companiesTableBody');
+        searchInput.addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const rows = tableBody.getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const companyNameCell = rows[i].getElementsByTagName('td')[0];
+                if (companyNameCell) {
+                    const companyName = companyNameCell.textContent || companyNameCell.innerText;
+                    if (companyName.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script src="{% static 'css/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+
+</body>
+
+</html>

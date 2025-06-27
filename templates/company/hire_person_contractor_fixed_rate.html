@@ -1,0 +1,565 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hire People Form</title>
+   <link href="{% static 'css/bootstrap/bootstrap.min.css'  %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar .logo {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .sidebar .nav-link {
+            color: #ccc;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #3f3f5a;
+            color: #007bff;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .nav-bottom {
+            margin-top: auto;
+        }
+
+        .icons i {
+            font-size: 1.3rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .icons i:hover {
+            color: #007bff;
+        }
+
+        /* overview card styling */
+
+        .overviewCard {
+            width: 550px;
+            position: relative;
+            left: 250px;
+        }
+
+        form {
+            font-size: smaller;
+            font-weight: bold;
+        }
+
+
+        .tab-nav .nav-link {
+            color: black;
+        }
+
+        .tab-nav .nav-link.active {
+            border-style: none;
+            border-bottom: 4px solid #5e50f9;
+        }
+
+        form div .btn {
+            width: 200px;
+        }
+
+        form div .btn:hover {
+            background-color: #0011FF;
+            color: #fff;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body onload="startTime()">
+    <div class="sidebar">
+        <div class="logo">Finally<span class="text-primary">HR</span></div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link " href="{% url 'company_dashboard' %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'company_employee' %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>People</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'company_document' %}">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>Documents</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-10">
+        <header>
+            <div class="d-flex justify-content-between p-2 bg-white">
+                <h4 class="m-3"><b>People</b></h4>
+                <div class="d-flex">
+                    <div class="dropdown m-2 bg-light">
+                        <a class="btn dropdown-toggle" href="#" role="button" id="" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            India's (IST)
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <li>
+                                <p class="m-2 p-2 rounded bg-light" id="time"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex m-2 icons">
+                        <p class="card p-2 m-1"><i class="far fa-bell"></i></p>
+                        <p class="card p-2 m-1"><i class="far fa-user"></i></p>
+                        <p class="card p-2 m-1"><i class="fas fa-th-large"></i></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+         <!-- Overview Cards -->
+
+        <div class="card rounded border-0 m-3 p-3 overviewCard">
+            <div>
+                <span class="fs-4"><b>Hire person</b></span><br>
+                <small class="text-muted fs-15">Create fixed rate contract</small>
+            </div><br>
+            {% if error_message %}
+                <div class="alert alert-danger" role="alert" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+            <ul class="nav nav-tabs tab-nav">
+                <li class="nav-item">
+                    <small class="text-muted m-4">Step 1</small>
+                    <p class="nav-link" id="personalDetailsTab">Personal details</p>
+                </li>
+
+                <li class="nav-item">
+                    <small class="text-muted m-4">Step 2</small>
+                    <p class="nav-link" id="contractDetailsTab">Contract details</p>
+                </li>
+                    
+                
+                <li class="nav-item">
+                    <small class="text-muted m-4">Step 3</small>
+                    <p class="nav-link" id="paymentDetailsTab">Payment details</p>
+                </li>
+            </ul>
+
+
+            <form method="POST" action="{% url 'hire_person_contractor_fixed_rate' %}">
+                
+                <!-- Personal details form -->
+                <div id="personalDetailsSection" class="align-items-center p-3">
+                    {% csrf_token %}
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="firstname" class="form-label">First Name</label>
+                            <input type="text" id="firstname" name="firstname" class="form-control form-control-sm" placeholder="John" required>
+                        </div>
+                        <div class="col">
+                            <label for="lastname" class="form-label">Last Name</label>
+                            <input type="text" id="lastname" name="lastname" class="form-control form-control-sm" placeholder="Deo" required>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="email" class="form-label">Personal email</label>
+                        <input type="email" id="email" name="email" class="form-control form-control-sm" placeholder="john@xyz.com" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="employee_country" class="form-label">Employee nationality</label>
+                        <select class="form-select" id="employee_country" name="employee_country" required>
+                            {% comment %} <option disabled selected>-- Select Employee Country --</option> {% endcomment %}
+                            {% for country in countries %}
+                                <option value="{{ country.id }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="employeement_country" class="form-label">Employment country</label>
+                        <select class="form-select" id="employeement_country" name="employeement_country" required>
+                            {% comment %} <option disabled selected>-- Select Employeement Country --</option> {% endcomment %}
+                            {% for country in countries %}
+                                <option value="{{ country.id }}" data-code="{{ country.code }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="job_title" class="form-label">Job title</label>
+                        <input type="text" class="form-control form-control-sm" id="job_title" name="job_title" placeholder="Software Developer" required>
+                    </div>
+                    <div class="row pt-4">
+                        <div class="col-6">
+                            <button type="reset" class="btn btn-light" disabled>Back</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" id="submitPersonalProfile" class="btn btn-primary" disabled>Next</button> 
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- Contract details form -->
+                <div id="contractDetailsSection" class="p-3 hidden">
+                    <div class="mb-2">
+                        <label for="country" class="col-sm-6 col-form-control">Contract duration in days</label>
+                        <input type="number" class="form-control form-control-sm" name="contract_duration" id="contract_duration" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="country" class="col-sm-6 col-form-control">Work location</label>
+                        <select class="form-select" name="work_location" id="work_location" required>
+                            <option value="On-site">On-site</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-between align-items-center mb-4">
+                        <div class=" col-md-8">
+                            <label for="country" class="col-sm-6 col-form-control">Notice period in days</label>
+                            <input type="number" class="form-control form-control-sm" name="notice_period" id="notice_period" required>
+                        </div>
+                        <div class="col-md-4 pt-4">
+                            <select class="form-select-sm">
+                                <option value="Day">Day</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row pt-5">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-light w-100">Back</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" id="submitContract" class="btn btn-primary w-100" disabled>Next</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+                <!-- Payemnt details form  -->
+                <div id="paymentDetailsSection" class="p-3 hidden">
+                    <div class="mb-2">
+                        <label for="date" class="col-sm-6 col-form-control">Select start date</label><br>
+                        <input type="datetime-local" class="form-control form-control-sm" name="start_date" id="start_date" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="payment_cycle" class="col-sm-6 col-form-control">Select payment cycle</label>
+                        <select class="form-select" name="payment_cycle" id="payment_cycle" required>
+                            <option value="" selected disabled>-- Select payment cycle first --</option>
+                            <option value="Weekly" >Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Bi-weekly">Bi-weekly</option>
+                            <option value="Twice in month">Twice in month</option>
+                        </select>
+                    </div>
+ 
+                    <!-- Weekly/Bi-weekly (Days Dropdown) -->
+                    <div class="mb-2" id="frequency-select-container">
+                        <label for="payment_frequency" class="col-sm-6 col-form-control">Select frequency cycle</label>
+                        <select class="form-select" name="payment_frequency" id="payment_frequency">
+                        </select>
+                    </div>
+    
+                    <!-- Monthly (Single Date Input) -->
+                    <div class="mb-2 d-none" id="calendar-input-container">
+                        <label for="payment_date" class="col-sm-6 col-form-control">Select date</label>
+                        <input type="date" class="form-control" name="payment_frequency" id="payment_frequency">
+                    </div>
+    
+                    <!-- Twice in Month (Two Date Inputs) -->
+                    <div class="mb-2 d-none" id="calendar-double-input-container">
+                        <label class="col-sm-6 col-form-control">Select first and second date</label>
+                        <input type="date" class="form-control mb-2" name="payment_frequency" id="payment_frequency">
+                        <input type="date" class="form-control" name="payment_frequency_date2" id="payment_frequency_date2">
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <label for="currency" class="col-sm-6 col-form-control">Currency</label>
+                            <input type="text" class="form-control" name="currency" id="currency" readonly />
+                            {% comment %} <select class="form-select">
+                                <option value="usd">USD</option>
+                                <option value="dollar">Dollar</option>
+                            </select> {% endcomment %}
+                        </div>
+                        <div class="col-md">
+                            <label for="rate" class="col-sm-6 col-form-control">Rate per hour</label>
+                            <input type="number" class="form-control" name="salary_per_hour" id="salary_per_hour" required />
+                        </div>
+                    </div>
+                    <div class="row pt-5">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-light">Back</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary">Hire</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+
+        // script for Current Time
+
+        function startTime() {
+            const today = new Date();
+            let h = today.getHours();
+            let m = today.getMinutes();
+            let s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+            setTimeout(startTime, 1000);
+        }
+
+        function checkTime(i) {
+            if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+            return i;
+        }
+
+        // script for Toggling
+
+        const personalDetailsTab = document.getElementById("personalDetailsTab");
+        const contractDetailsTab = document.getElementById("contractDetailsTab");
+        const paymentDetailsTab = document.getElementById("paymentDetailsTab");
+
+        const personalDetailsSection = document.getElementById("personalDetailsSection");
+        const contractDetailsSection = document.getElementById("contractDetailsSection");
+        const paymentDetailsSection = document.getElementById("paymentDetailsSection");
+
+        function showPersonalForm() {
+            personalDetailsTab.classList.add("active");
+            contractDetailsTab.classList.remove("active");
+            paymentDetailsTab.classList.remove("active");
+
+            personalDetailsSection.classList.remove("hidden");
+            contractDetailsSection.classList.add("hidden");
+            paymentDetailsSection.classList.add("hidden");
+        }
+
+        function showContractForm() {
+            contractDetailsTab.classList.add("active");
+            personalDetailsTab.classList.remove("active");
+            paymentDetailsTab.classList.remove("active");
+
+            contractDetailsSection.classList.remove("hidden");
+            personalDetailsSection.classList.add("hidden");
+            paymentDetailsSection.classList.add("hidden");
+        }
+
+        function showPaymentForm() {
+            paymentDetailsTab.classList.add("active");
+            personalDetailsTab.classList.remove("active");
+            contractDetailsTab.classList.remove("active");
+
+            paymentDetailsSection.classList.remove("hidden");
+            personalDetailsSection.classList.add("hidden");
+            contractDetailsSection.classList.add("hidden");
+        }
+        
+
+        // Personal Details -> Contract Details
+        document.querySelector("#personalDetailsSection #submitPersonalProfile").addEventListener("click", function (e) {
+            showContractForm();
+        });
+
+
+        // Contract Details -> Payemnt Details
+        document.querySelector("#contractDetailsSection #submitContract").addEventListener("click", function (e) {
+            showPaymentForm();
+        });
+
+        // Payment Details -> Back to Contract Details
+        document.querySelector("#paymentDetailsSection .btn-light").addEventListener("click", function (e) {
+           showContractForm();
+        });
+
+        // Contract Details -> Back to Personal Details
+        document.querySelector("#contractDetailsSection .btn-light").addEventListener("click", function (e) {
+           showPersonalForm();
+        });
+
+        showPersonalForm();
+
+
+
+        const inputsPersonalProfile = [
+            document.getElementById("firstname"),
+            document.getElementById("lastname"),    
+            document.getElementById("email"),
+            document.getElementById("employee_country"),
+            document.getElementById("employeement_country"),
+            document.getElementById("job_title")
+        ];
+
+        const submitPersonalProfile = document.getElementById("submitPersonalProfile");
+
+        function checkPersonalProfileFormFields() {
+        const allFilled = inputsPersonalProfile.every(input => input.value.trim() !== "");
+        submitPersonalProfile.disabled = !allFilled;
+        }
+
+        // Attach event listener to each field
+        inputsPersonalProfile.forEach(input => {
+        input.addEventListener("input", checkPersonalProfileFormFields);
+        input.addEventListener("change", checkPersonalProfileFormFields); // for <select>
+        });
+
+
+        const inputsContract = [
+            document.getElementById("contract_duration"),
+            document.getElementById("work_location"),    
+            document.getElementById("notice_period"),
+            //document.getElementById("project_name"),
+            //document.getElementById("project_salary_per_hour"),
+            //document.getElementById("project_desc")
+        ];
+
+        const submitContract = document.getElementById("submitContract");
+
+        function checkContractFormFields() {
+        const allFilled = inputsContract.every(input => input.value.trim() !== "");
+        submitContract.disabled = !allFilled;
+        }
+
+        // Attach event listener to each field
+        inputsContract.forEach(input => {
+        input.addEventListener("input", checkContractFormFields);
+        input.addEventListener("change", checkContractFormFields); // for <select>
+        }); 
+
+
+
+        const countrySelect = document.getElementById("employeement_country");
+        const currencyInput = document.getElementById("currency");
+
+        window.addEventListener("DOMContentLoaded", function () {
+            const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+            const countryCode = selectedOption.getAttribute("data-code");
+            currencyInput.value = countryCode || "₹";
+        });
+
+        countrySelect.addEventListener("change", function () {
+            const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+            const countryCode = selectedOption.getAttribute("data-code");
+            currencyInput.value = countryCode || "₹";
+        });
+
+        const paymentCycle = document.getElementById("payment_cycle");
+        const paymentFrequency = document.getElementById("payment_frequency");
+        const paymentDate = document.getElementById("payment_date");
+        const paymentDateStart = document.getElementById("payment_date_start");
+        const paymentDateEnd = document.getElementById("payment_date_end");
+ 
+        const selectContainer = document.getElementById("frequency-select-container");
+        const calendarContainer = document.getElementById("calendar-input-container");
+        const calendarDoubleContainer = document.getElementById("calendar-double-input-container");
+ 
+        function updatePaymentFrequency() {
+            const selectedCycle = paymentCycle.value;
+ 
+            // Reset all visibility
+            selectContainer.classList.add("d-none");
+            calendarContainer.classList.add("d-none");
+            calendarDoubleContainer.classList.add("d-none");
+ 
+            if (selectedCycle === "Weekly" || selectedCycle === "Bi-weekly") {
+                selectContainer.classList.remove("d-none");
+                paymentFrequency.innerHTML = "";
+ 
+                const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday","sunday"];
+                days.forEach(day => {
+                    const option = document.createElement("option");
+                    option.value = day;
+                    option.textContent = `Every ${day}`;
+                    if (paymentFrequency.getAttribute("data-selected") === day) {
+                        option.selected = true;
+                    }
+                    paymentFrequency.appendChild(option);
+                });
+ 
+            } else if (selectedCycle === "Monthly") {
+                calendarContainer.classList.remove("d-none");
+ 
+            } else if (selectedCycle === "Twice in month") {
+                calendarDoubleContainer.classList.remove("d-none");
+ 
+            }
+        }
+ 
+        paymentCycle.addEventListener("change", updatePaymentFrequency);
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

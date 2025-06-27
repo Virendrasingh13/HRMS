@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+ 
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            margin: 0;
+            overflow-x: hidden;
+        }
+ 
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+ 
+        .sidebar .logo {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #fff;
+            text-align: center;
+        }
+ 
+        .sidebar .nav-link {
+            color: #ccc;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+ 
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #3f3f5a;
+            color: #007bff;
+        }
+ 
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+ 
+        .sidebar .nav-bottom {
+            margin-top: auto;
+        }
+ 
+        .icons i {
+            font-size: 1.3rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+ 
+        .icons i:hover {
+            color: #007bff;
+        }
+ 
+        .view-all {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color;
+        }
+ 
+        .view-all:hover {
+            color: #0056b3;
+        }
+
+        .status-approved {
+            background-color: #d1ffe7;
+            color: #1aaa55;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .status-under-review {
+            background-color: #fff7d1;
+            color: #c79700;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .status-rejected {
+            background-color: #ffd6d6;
+            color: #d11a2a;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+ 
+        .table {
+            margin-bottom: 0;
+        }
+ 
+        .table thead th {
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #555;
+            padding: 15px 12px;
+            background-color: #f0f2f5;
+        }
+ 
+        .table tbody tr {
+            border-bottom: 1px solid #d3d3d3;
+        }
+ 
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+ 
+        .table tbody td {
+            vertical-align: middle;
+            padding: 12px;
+            color: #444;
+        }
+ 
+        .table tbody td img {
+            width: 24px;
+            height: 18px;
+            border-radius: 3px;
+            margin-right: 8px;
+            object-fit: cover;
+        }
+ 
+        .badge-active {
+            background-color: #e6f7ed;
+ 
+            color: #28a745;
+ 
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+ 
+<body onload="startTime()">
+    <div class="sidebar">
+        <div class="logo">Finally<span class="text-primary">HR</span></div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'company_dashboard' %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'company_employee' %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>People</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'company_document' %}">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>Documents</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+ 
+    <!-- Main Content -->
+    <div class="col-md-10 ">
+        <header>
+            <div class="d-flex justify-content-between p-2 bg-white">
+                <h4 class="m-3"><b>Hello {{company_admin_name}} 👋</b></h4>
+                <div class="d-flex">
+                    <div class="dropdown m-2 bg-light">
+                        <a class="btn dropdown-toggle" href="#" role="button" id="" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            India's (IST)
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <li>
+                                <p class="m-2 p-2 rounded bg-light" id="time"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex m-2 icons">
+                        <p class="card p-2 m-1"><i class="far fa-bell"></i></p>
+                        <p class="card p-2 m-1"><i class="far fa-user"></i></p>
+                        <p class="card p-2 m-1"><i class="fas fa-th-large"></i></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+ 
+ 
+        <!-- Overview Cards -->
+        <div class="row m-3 bg-white p-2 rounded">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Overview</h5>
+                <div>
+                    <a href="{% url 'hire_person' %}">
+                        <button type="button" class="btn btn-primary p-2">+ Hire</button>
+                    </a>
+                    
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-2 shadow-sm rounded">
+                    <h6>Onboarding</h6>
+                    <h4>{{total_count}}</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-2 shadow-sm rounded">
+                    <h6>Active</h6>
+                    <h4>{{active_count}}</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light p-2 shadow-sm rounded">
+                    <h6>Inactive</h6>
+                    <h4>{{inactive_count}}</h4>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Companies Table -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card border-0 bg-white p-3 m-2 rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>
+                            <i class="fa-solid fa-users"></i> Team overview
+                        </h5>
+                        <a href={% url 'company_employee' %} class="view-all">View all <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employees %}
+                            <tr>
+                                
+                                <td>
+                                    <a class="text-decoration-none" href="{% url 'personal_profile' employee.id %}">{{ employee.first_name }}</a>
+                                </td>
+                                
+                                <td>
+                                    <span class="
+                                        {% if employee.status == 'Active' %}
+                                            status-approved
+                                        {% else %}
+                                            status-rejected
+                                        {% endif %}
+                                    ">
+                                        {{ employee.status }}
+                                    </span>
+                                </td>
+                                <td>{{ employee.hire_person_type }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No employee data available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </div>
+ 
+            <div class="col-md-4">
+                <div class="card p-3 m-2 border-0 bg-white">
+                    <h5><i class="fa-solid fa-globe"></i><b> People by Country</b></h5>
+                    <table class="table table-hover">
+                        <tbody>
+                            {% for country in countries %}
+                            <tr>
+                                <td>{{ country.name }}</td>
+                                <td>{{ country.employee_count }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No countries found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <!--script for Current Time -->
+    <script>
+        function startTime() {
+            const today = new Date();
+            let h = today.getHours();
+            let m = today.getMinutes();
+            let s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+            setTimeout(startTime, 1000);
+        }
+ 
+        function checkTime(i) {
+            if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+            return i;
+        }
+    </script>
+ 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+ 
+</html>
+ 
