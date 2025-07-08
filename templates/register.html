@@ -185,6 +185,12 @@
                 class="w-100 h-100 object-fit-contain p-0 m-0">
         </div>
     </div>
+	<script>
+	  if (window.innerWidth <= 768) {
+	    // Block or redirect mobile users
+	    document.body.innerHTML = "<h2 style='text-align:center;margin-top:20px;'>This site is not available on mobile devices. Please use a desktop or tablet.</h2>";
+	  }
+	</script>
 
     <script src="{% static 'css/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </body>

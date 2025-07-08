@@ -30,6 +30,9 @@ SECRET_KEY = "django-insecure-#od$_yn-l7@=9cj)c=kn=77=bj1hyrep4!0la-c^4g3_!8cl8a
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+CSRF_TRUSTED_ORIGINS = [
+    "https://hrms.virendrasingh.tech",
+]
 
 
 # Application definition
@@ -145,7 +148,7 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = 'no-reply@virendrasingh.tech'
 
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'

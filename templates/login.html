@@ -141,12 +141,12 @@
                         {% csrf_token %}
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input name="email" type="email" class="form-control" placeholder="my@email.com" required/>
+                            <input name="email" type="email" class="form-control" placeholder="demo@yopmail.com" required/>
                         </div>
                         <div class="mb-1 position-relative">
                             <label class="form-label">Password</label>
                             <input name="password" type="password" class="form-control"
-                                placeholder="Enter your password" required/>
+                                placeholder="Password: demo@1234" required/>
                         </div>
                         <div class="text-end mb-4">
                             <a href="#" class="text-decoration-none text-primary fw-semibold m-0"
@@ -169,6 +169,12 @@
         </div>
     </div>
     <script src="{% static 'css/bootstrap/bootstrap.bundle.min.js' %}"></script>
+	<script>
+	  if (window.innerWidth <= 768) {
+	    // Block or redirect mobile users
+	    document.body.innerHTML = "<h2 style='text-align:center;margin-top:20px;'>This site is not available on mobile devices. Please use a desktop or tablet.</h2>";
+	  }
+	</script>
 
 </body>
 
